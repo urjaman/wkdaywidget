@@ -20,6 +20,7 @@
 #include "buttons.h"
 #include "timer.h"
 #include "console.h"
+#include "dsp16seg.h"
 
 void cli_bgloop(void) {
 	timer_run();
@@ -39,6 +40,7 @@ void main(void) {
 	ciface_init();
 	timer_init();
 	buttons_init();
+	dsp16seg_init();
 	i2c_init();
 	for(;;) {
 		mini_mainloop();

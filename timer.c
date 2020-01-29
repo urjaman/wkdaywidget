@@ -2,9 +2,6 @@
 #include "timer.h"
 #include "buttons.h"
 #include "rtc.h"
-#include "powermgmt.h"
-#include "lcd.h"
-#include "fat_config.h"
 
 #define IDLE_TIMEOUT 600
 
@@ -71,7 +68,7 @@ void timer_run(void) {
 			timer_system_idle = (diff > IDLE_TIMEOUT);
 		}
 		if (buttons_get_v()) timer_system_idle = 0;
-		lcd_idle(timer_system_idle);
+		//lcd_idle(timer_system_idle);
 		timer_gen_5hzp();
 		if (timer_5hzp) {
 			timer5hz++;
@@ -81,7 +78,7 @@ void timer_run(void) {
 			timer_waiting=0;
 			break;
 		}
-		low_power_mode();
+		//low_power_mode();
 	}
 }
 
