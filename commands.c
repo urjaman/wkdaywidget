@@ -17,6 +17,15 @@ CIFACE_APP(d16s_cmd, "DSP16")
 
 }
 
+CIFACE_APP(d16br_cmd, "BR")
+{
+	if (token_count==2) {
+		dsp16seg_set_brightness(str2uchar(tokenptrs[1]));
+		sendstr_P(PSTR("Set."));
+	}
+
+}
+
 CIFACE_APP(btns_cmd, "BTNS")
 {
 	do {

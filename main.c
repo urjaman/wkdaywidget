@@ -21,6 +21,7 @@
 #include "timer.h"
 #include "console.h"
 #include "dsp16seg.h"
+#include "ui.h"
 
 void cli_bgloop(void) {
 	timer_run();
@@ -44,6 +45,7 @@ void main(void) {
 	i2c_init();
 	for(;;) {
 		mini_mainloop();
+		ui_run();
 	}
 }
 
