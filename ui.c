@@ -220,7 +220,9 @@ uint8_t numeric_entry(uint8_t start, uint8_t min, uint8_t max, uint8_t toval, vo
 }
 
 void wait_nokey(void) {
-	dsp16seg_settext("");
+	char st[3];
+	strcpy_P(st, PSTR("__"));
+	dsp16seg_settext(st);
 	for (uint8_t d=0;d<100;d++) {
 		if (!buttons_get()) break;
 		timer_delay_ms(50);
