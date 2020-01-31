@@ -33,9 +33,9 @@ static const uint16_t asc2segtab[64] PROGMEM = {
 	S_F | S_B,	// "
 	0,		// #
 
-	0,		// $
-	0,		// %
-	0,		// &
+	S_J | S_M | S_A1 | S_A2 | S_F | S_G1 | S_G2 | S_C | S_D2 | S_D1, // $
+	S_N | S_K | S_A1 | S_D2, // %
+	S_L | S_H | S_A1 | S_J | S_N | S_D1 | S_D2 | S_C, // &
 	S_B,		// '
 
 	S_K | S_L, // (
@@ -62,14 +62,14 @@ static const uint16_t asc2segtab[64] PROGMEM = {
 
 	// Uhh...
 
-	0, // :
-	0, // ;
-	0, // <
+	S_G1 | S_D1, // :
+	S_A1 | S_N, // ;
+	S_K | S_G2 | S_L, // <
 	S_G1 | S_G2 | S_D1 | S_D2, // =
-	0, // >
-	0, // ?
+	S_H | S_G1 | S_N, // >
+	S_A1 | S_A2 | S_B | S_G2 | S_M, // ?
 
-	0, // @
+	S_G2 | S_B | S_A2 | S_A1 | S_F | S_E | S_D1 | S_D2, // @
 
 	// Letters
 	S_F | S_A1 | S_A2 | S_B | S_G1 | S_G2 | S_E | S_C, // A
@@ -103,7 +103,7 @@ static const uint16_t asc2segtab[64] PROGMEM = {
 	S_A2 | S_J | S_M | S_D2, // [
 	S_H | S_L, // '\'
 	S_A1 | S_J | S_M | S_D1, // ]
-	0, // ^
+	S_N | S_L, // ^
 	S_D1 | S_D2 // _
 };
 
