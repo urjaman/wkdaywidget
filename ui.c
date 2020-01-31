@@ -218,12 +218,59 @@ uint8_t numeric_entry(uint8_t start, uint8_t min, uint8_t max, uint8_t toval) {
 
 void wait_nokey(void) {
 	dsp16seg_settext("");
-	for (uint8_t d=0;d<20;d++) {
+	for (uint8_t d=0;d<100;d++) {
 		if (!buttons_get()) break;
 		timer_delay_ms(50);
 		mini_mainloop();
 	}
 }
+
+uint8_t text_select(uint8_t start, uint8_t toval, uint8_t count, const PGM_P *table) {
+	const int timeout = 45;
+	uint32_t touchtime = timer_get();
+	uint8_t n = start;
+	uint8_t scroll_skipcnt = 0;
+	wait_nokey();
+	do {
+		if (!scroll_skipcnt) {
+			dsp16seg_settext("");
+			timer_delay_ms(200);
+			ui_scroll_str_P(table[n], 3);
+		}
+		timer_delay_ms(100);
+		mini_mainloop();
+		scroll_skipcnt++;
+		if (scroll_skipcnt == 10) scroll_skipcnt = 0;
+
+		uint8_t old_n = n;
+		uint8_t b = buttons_get();
+		switch (b) {
+			case 0: {
+					int passed = timer_get() - touchtime;
+					if (passed >= timeout) {
+						return toval;
+					}
+				}
+				break;
+			case BUTTON_S1:
+				if (n == count-1) n=0;
+				else n++;
+				break;
+			case BUTTON_S2:
+				if (!n) n = count-1;
+				else n--;
+				break;
+			case BUTTON_BOTH:
+				return n;
+		}
+		if (old_n != n) {
+			touchtime = timer_get();
+			scroll_skipcnt = 0;
+			wait_nokey();
+		}
+	} while(1);
+}
+
 
 void set_timedate(void) {
 	uint16_t yr;
@@ -237,6 +284,7 @@ void set_timedate(void) {
 
 	const uint8_t abort_val = 255;
 
+	wait_nokey();
 	ui_scroll_str_P(PSTR("Vuosisata: "),4);
 	century = numeric_entry(century, 20, 22, abort_val);
 	if (century == abort_val) return;
@@ -273,6 +321,40 @@ void set_timedate(void) {
 	ui_scroll_str_P(PSTR("Aika Asetettu"),3);
 }
 
+void main_menu(void) {
+	const PGM_P table[] = {
+		PSTR("Ajan Asetus"),
+		PSTR("Yokirkkauden Asetus"),
+		PSTR("Paivakirkkauden Asetus"),
+		PSTR("Poistu")
+	};
+	uint8_t sel = text_select(0, 3, 4, table);
+	switch (sel) {
+		default:
+			return;
+		case 0:
+			set_timedate();
+			return;
+
+		case 1:
+		case 2: {
+				uint8_t brv = (sel == 2 ? ss.br_day : ss.br_night) + 1;
+				uint8_t max = sel == 2 ? 10 : ss.br_day+1;
+				uint8_t min = sel == 2 ? ss.br_night+1 : 1;
+				wait_nokey();
+				brv = numeric_entry(brv, min, max, brv);
+				if (sel == 2) {
+					ss.br_day = brv-1;
+				} else {
+					ss.br_night = brv-1;
+				}
+				update_brightness();
+				save_ss();
+			}
+			break;
+	}
+}
+
 void ui_init(void) {
 	load_ss();
 }
@@ -291,7 +373,7 @@ void ui_run(void) {
 		timer_delay_ms(200);
 		update_wkday();
 	} else if (b==BUTTON_BOTH) {
-		set_timedate();
+		main_menu();
 		timer_delay_ms(200);
 		dsp16seg_settext("");
 		timer_delay_ms(200);
