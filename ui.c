@@ -179,12 +179,13 @@ static void date_scroller(void) {
 	ui_scroll_str(c, 5);
 }
 
-uint8_t numeric_entry(uint8_t start, uint8_t min, uint8_t max, uint8_t toval) {
+uint8_t numeric_entry(uint8_t start, uint8_t min, uint8_t max, uint8_t toval, void (*cb)(uint8_t)) {
 	const int timeout = 75;
 	uint32_t touchtime = timer_get();
 	uint8_t n = start;
 	char e[3];
 	e[2] = 0;
+	if (cb) cb(n);
 	do {
 		twodigits(e, n);
 		dsp16seg_settext(e);
@@ -204,11 +205,13 @@ uint8_t numeric_entry(uint8_t start, uint8_t min, uint8_t max, uint8_t toval) {
 				touchtime = timer_get();
 				if (n==max) n=min;
 				else n++;
+				if (cb) cb(n);
 				break;
 			case BUTTON_S2:
 				touchtime = timer_get();
 				if (n==min) n=max;
 				else n--;
+				if (cb) cb(n);
 				break;
 			case BUTTON_BOTH:
 				return n;
@@ -286,12 +289,12 @@ void set_timedate(void) {
 
 	wait_nokey();
 	ui_scroll_str_P(PSTR("Vuosisata: "),4);
-	century = numeric_entry(century, 20, 22, abort_val);
+	century = numeric_entry(century, 20, 22, abort_val, NULL);
 	if (century == abort_val) return;
 
 	wait_nokey();
 	ui_scroll_str_P(PSTR("Vuosi: "), 4);
-	subyear = numeric_entry(subyear, 00, century==22 ? 55 : 99, abort_val);
+	subyear = numeric_entry(subyear, 00, century==22 ? 55 : 99, abort_val, NULL);
 	if (subyear == abort_val) return;
 
 	yr = century * 100 + subyear;
@@ -299,26 +302,32 @@ void set_timedate(void) {
 
 	wait_nokey();
 	ui_scroll_str_P(PSTR("Kuukausi: "), 4);
-	t.month = numeric_entry(t.month, 1, 12, abort_val);
+	t.month = numeric_entry(t.month, 1, 12, abort_val, NULL);
 	if (t.month == abort_val) return;
 
 	wait_nokey();
 	ui_scroll_str_P(PSTR("Paiva: "), 4);
-	t.day = numeric_entry(t.day, 1, month_days(t.year,t.month-1), abort_val);
+	t.day = numeric_entry(t.day, 1, month_days(t.year,t.month-1), abort_val, NULL);
 	if (t.day == abort_val) return;
 
 	wait_nokey();
 	ui_scroll_str_P(PSTR("Tunnit: "), 4);
-	t.hour = numeric_entry(t.hour, 0, 23, abort_val);
+	t.hour = numeric_entry(t.hour, 0, 23, abort_val, NULL);
 	if (t.hour == abort_val) return;
 
 	wait_nokey();
 	ui_scroll_str_P(PSTR("Minuutit: "), 4);
-	t.min = numeric_entry(t.min, 0, 59, abort_val);
+	t.min = numeric_entry(t.min, 0, 59, abort_val, NULL);
 	if (t.min == abort_val) return;
 	timer_set_time(&t);
 
 	ui_scroll_str_P(PSTR("Aika Asetettu"),3);
+}
+
+
+void brightness_preview_cb(uint8_t brv) {
+	uint8_t hwbr = pgm_read_byte(bright_table + (brv-1));
+	dsp16seg_set_brightness(hwbr);
 }
 
 void main_menu(void) {
@@ -342,7 +351,7 @@ void main_menu(void) {
 				uint8_t max = sel == 2 ? 10 : ss.br_day+1;
 				uint8_t min = sel == 2 ? ss.br_night+1 : 1;
 				wait_nokey();
-				brv = numeric_entry(brv, min, max, brv);
+				brv = numeric_entry(brv, min, max, brv, brightness_preview_cb);
 				if (sel == 2) {
 					ss.br_day = brv-1;
 				} else {
