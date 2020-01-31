@@ -28,9 +28,16 @@ void cli_bgloop(void) {
 	if ((uart_isdata()) ||(getline_i) ) timer_activity();
 }
 
+/* Avoid accidental reentry into ciface while calling UI functions from ciface */
+/* No multithreading going on here so a simple variable will do. */
+static uint8_t ciface_lock = 0;
 void mini_mainloop(void) {
 	cli_bgloop();
-	ciface_run();
+	if (!ciface_lock) {
+		ciface_lock = 1;
+		ciface_run();
+		ciface_lock = 0;
+	}
 }
 
 void main (void) __attribute__ ((noreturn));
@@ -43,6 +50,7 @@ void main(void) {
 	buttons_init();
 	dsp16seg_init();
 	i2c_init();
+	ui_init();
 	for(;;) {
 		mini_mainloop();
 		ui_run();

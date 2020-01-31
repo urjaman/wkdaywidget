@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "buttons.h"
 #include "dsp16seg.h"
+#include "ui.h"
 
 CIFACE_APP(d16s_cmd, "DSP16")
 {
@@ -25,6 +26,27 @@ CIFACE_APP(d16br_cmd, "BR")
 	}
 
 }
+
+CIFACE_APP(uiscr_cmd, "SCRL")
+{
+	if ((token_count >= 2) && (token_count <= 3)) {
+		uint8_t spd = 4;
+		if (token_count == 3) {
+			uint8_t tspd = str2uchar(tokenptrs[2]);
+			if ((tspd >= 1) && (tspd <= 10)) spd = tspd;
+		}
+		sendstr_P(PSTR("Scrolling..."));
+		dsp16seg_settext("");
+		timer_delay_ms(200);
+		ui_scroll_str((char*)tokenptrs[1], spd);
+		timer_delay_ms(200);
+		dsp16seg_settext("");
+		sendstr_P(PSTR(" Scrolled."));
+	}
+
+}
+
+
 
 CIFACE_APP(btns_cmd, "BTNS")
 {
