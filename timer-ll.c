@@ -70,8 +70,7 @@ uint16_t timer_get_lin_us(void) {
 
 
 void timer_init(void) {
-	timer_run_todo=0;
-	timer_waiting=1;
+	timer_run_todo=1;
 	TCCR0B = _BV(CS00);
 	TIMSK0 |= _BV(TOIE0);
 }
