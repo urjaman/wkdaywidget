@@ -67,6 +67,23 @@ void rtc_write(struct mtm* tm) {
 	return;
 }
 
+#define RTC_RAM_OFFSET 10
+
+uint8_t rtc_read_ram(void *buf, uint8_t len) {
+	if (i2c_read_regs(RTC_I2C_ADDR,RTC_RAM_OFFSET,len,buf)) {
+		rtc_is_ok=0;
+		return 1; // Not OK
+	}
+	return 0;
+}
+
+uint8_t rtc_write_ram(void *buf, uint8_t len) {
+	if (i2c_write_regs(RTC_I2C_ADDR,RTC_RAM_OFFSET,len,buf)) {
+		rtc_is_ok = 0;
+		return 1; // Not OK
+	}
+	return 0;
+}
 
 
 uint8_t rtc_valid(void) {
