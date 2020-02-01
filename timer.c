@@ -12,8 +12,17 @@ static uint8_t timer_5hzp=0; // 5 HZ Pulse
 static uint32_t secondstimer=0;
 static uint8_t timer5hz=0; // Linear 8-bit counter at 5hz, rolls over every 51s.
 static uint8_t timer5hz_todo=0; // Used to fix linear counter if a 5hz pulse is missed.
-static uint32_t timer_idle_since=0;
-static uint8_t timer_system_idle=0;
+
+/* Simplified "power management" code because we can never deep sleep. */
+/* (Due to the timer PWMs being always on, because the display is always lit.) */
+static void low_power_mode(void) {
+	cli();
+	SMCR = _BV(SE);
+	sei();
+	sleep_cpu();
+	SMCR = 0; /* sleep_disable */
+}
+
 
 static uint16_t timer_gen_5hzp(void) {
 	static uint8_t state=0;
@@ -27,11 +36,6 @@ static uint16_t timer_gen_5hzp(void) {
 		state++;
 	}
 	return rv;
-}
-
-void timer_activity(void) {
-	timer_idle_since = secondstimer;
-	timer_system_idle = 0;
 }
 
 void timer_delay_us(uint24_t us) {
@@ -64,11 +68,8 @@ void timer_run(void) {
 			timer5hz += timer5hz_todo;
 			timer5hz_todo = 5;
 			timer_time_tick();
-			uint32_t diff = secondstimer - timer_idle_since;
-			timer_system_idle = (diff > IDLE_TIMEOUT);
 		}
-		if (buttons_get_v()) timer_system_idle = 0;
-		//lcd_idle(timer_system_idle);
+
 		timer_gen_5hzp();
 		if (timer_5hzp) {
 			timer5hz++;
@@ -78,13 +79,10 @@ void timer_run(void) {
 			timer_waiting=0;
 			break;
 		}
-		//low_power_mode();
+		low_power_mode();
 	}
 }
 
-uint8_t timer_get_idle(void) {
-	return timer_system_idle;
-}
 
 uint32_t timer_get(void) {
 	return secondstimer;

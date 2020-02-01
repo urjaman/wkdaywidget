@@ -18,7 +18,6 @@ uint8_t buttons_get_v(void) {
 uint8_t buttons_get(void) {
 	uint8_t v = buttons_get_v();
 	if (!v) return 0;
-	timer_activity();
 	timer_delay_ms(125);
 	for(;;) {
 		uint8_t sv;

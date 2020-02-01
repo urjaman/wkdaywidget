@@ -25,7 +25,6 @@
 
 void cli_bgloop(void) {
 	timer_run();
-	if ((uart_isdata()) ||(getline_i) ) timer_activity();
 }
 
 /* Avoid accidental reentry into ciface while calling UI functions from ciface */
