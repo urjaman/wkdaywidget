@@ -1,0 +1,47 @@
+The Weekday-o-matic aka wkdaywidget
+-----------------------------------
+
+This is a rather gigantic "Arduino" shield,
+to make a rather big display showing the
+current day of week. Or well atleast the
+firmware for running it and a design
+for the PCB on it.
+
+BOM for the whole thing:
+- An ATmega328-based arduino (Uno R3 clone)
+- A DS1307 RTC module (with backup battery) soldered into the arduino I2C pins
+	(or a datalogger shield, do not insert an SD card to that tho)
+- the PCB (in hw-kicad/)
+- some 0.1" headers
+- 2 big common cathode 16-segment displays:
+https://www.ebay.com/itm/2-3-16Segment-1-Digit-Bit-RED-LED-Display-Red-Signs-2-3inch-16-segment-CC-CA/254326426921
+
+- 4 SO-16 74HC595D shift register & latches
+- 5 4x0603 100ohm resistor arrays (RN1, RN2, RN4, RN5, RN7)
+- 3 4x0603 220ohm resistor arrays (RN3, RN6, RN8)
+- 2 560ohm 0603 resistors
+- 1 100kohm 0603 resistor
+- 4 0.1uF 0603 capacitors
+- 2 "6mm" "standard" PCB push buttons
+
+NOTE/WARNING: in the current PCB the spacing between the rows on the big displays is too big (tall, whatever),
+though it was possible to bend the pins on the display enough to push them in.
+
+If you intend to build this, i recommend you first get the displays and measure 
+the actual row spacing (because i did it to the spec on ebay, 62mm, but no dice)
+and adjust the PCB design appropriately (or email me for me to do that).
+I'd do it but I already soldered my displays down (so hard to measure) + am lazy.
+(This is mostly a note to self in case i ever get more PCBs :P)
+
+The firmware defaults to finnish, but just adjust the includes 
+in the beginning of ui.c to get english.
+
+PRs accepted if you want to add a header for your own language :)
+
+To clone this repo, remember to use --recursive since it contains a submodule.
+You will need an AVR toolchain (avr-gcc, avr-libc etc) to build the firmware,
+and avrdude to program it.
+
+The targets are just "make" to build the firmware and "make program" for the
+programming. Check the Makefile that you have the correct serial device
+etc first.
