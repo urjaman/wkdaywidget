@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2019,2020 Urja Rannikko <urjaman@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
 /* The RTC is a DS1307. This module is minimalistic, should work for lots of RTC's with little change. */
 #include "main.h"
 #include "time.h"
@@ -31,7 +46,7 @@ uint8_t rtc_read(struct mtm* tm) {
 	}
 	tm->sec = readbcd(buf[0]);
 	tm->min = readbcd(buf[1]&0x7F);
-	tm->hour = readbcd(buf[2]&0x3F);	
+	tm->hour = readbcd(buf[2]&0x3F);
 	tm->year = readbcd(buf[6]);
 	tm->month = readbcd(buf[5]&0x1F);
 	tm->day = readbcd(buf[4]&0x3F);
