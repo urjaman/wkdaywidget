@@ -10,9 +10,6 @@
 
 #include "lang_fi.h"
 
-// English version in case you want it:
-//const char wkdaystr[] PROGMEM = "MOTUWETHFRSASU";
-
 const char wkdaystr[] PROGMEM = WEEKDAYSTR;
 
 const uint8_t bright_table[10] PROGMEM = {
@@ -327,6 +324,7 @@ void set_timedate(void) {
 	if (t.min == abort_val) return;
 	timer_set_time(&t);
 
+	wait_nokey();
 	ui_scroll_str_P(PSTR(TIME_SET_DONE_STR),3);
 }
 
