@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 void buttons_init(void);
 uint8_t buttons_get(void);

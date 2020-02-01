@@ -30,7 +30,7 @@ uint24_t timer_get_linear_ss_time(void);
 uint16_t timer_get_lin_ss_u16(void);
 uint16_t timer_get_lin_us(void);
 
-/* timer-ll.c is used to consolidate access to todo and subsectimer 
+/* timer-ll.c is used to consolidate access to todo and subsectimer
    to a single object */
 
 #define SSTC ((F_CPU+128)/256)
