@@ -6,10 +6,14 @@
 #include "rtc.h"
 #include <util/crc16.h>
 
+/* Language select - uncomment the one you want to use. */
+
+#include "lang_fi.h"
+
 // English version in case you want it:
 //const char wkdaystr[] PROGMEM = "MOTUWETHFRSASU";
 
-const char wkdaystr[] PROGMEM =   "MATIKETOPELASU";
+const char wkdaystr[] PROGMEM = WEEKDAYSTR;
 
 const uint8_t bright_table[10] PROGMEM = {
 //	0  1  2  3  4   5  6   7     8    9
@@ -290,12 +294,12 @@ void set_timedate(void) {
 	const uint8_t abort_val = 255;
 
 	wait_nokey();
-	ui_scroll_str_P(PSTR("Vuosisata: "),4);
+	ui_scroll_str_P(PSTR(CENTURY_STR),4);
 	century = numeric_entry(century, 20, 22, abort_val, NULL);
 	if (century == abort_val) return;
 
 	wait_nokey();
-	ui_scroll_str_P(PSTR("Vuosi: "), 4);
+	ui_scroll_str_P(PSTR(YEAR_STR), 4);
 	subyear = numeric_entry(subyear, 00, century==22 ? 55 : 99, abort_val, NULL);
 	if (subyear == abort_val) return;
 
@@ -303,27 +307,27 @@ void set_timedate(void) {
 	t.year = yr - TIME_EPOCH_YEAR;
 
 	wait_nokey();
-	ui_scroll_str_P(PSTR("Kuukausi: "), 4);
+	ui_scroll_str_P(PSTR(MONTH_STR), 4);
 	t.month = numeric_entry(t.month, 1, 12, abort_val, NULL);
 	if (t.month == abort_val) return;
 
 	wait_nokey();
-	ui_scroll_str_P(PSTR("Paiva: "), 4);
+	ui_scroll_str_P(PSTR(DAY_STR), 4);
 	t.day = numeric_entry(t.day, 1, month_days(t.year,t.month-1), abort_val, NULL);
 	if (t.day == abort_val) return;
 
 	wait_nokey();
-	ui_scroll_str_P(PSTR("Tunnit: "), 4);
+	ui_scroll_str_P(PSTR(HOURS_STR), 4);
 	t.hour = numeric_entry(t.hour, 0, 23, abort_val, NULL);
 	if (t.hour == abort_val) return;
 
 	wait_nokey();
-	ui_scroll_str_P(PSTR("Minuutit: "), 4);
+	ui_scroll_str_P(PSTR(MINUTES_STR), 4);
 	t.min = numeric_entry(t.min, 0, 59, abort_val, NULL);
 	if (t.min == abort_val) return;
 	timer_set_time(&t);
 
-	ui_scroll_str_P(PSTR("Aika Asetettu"),3);
+	ui_scroll_str_P(PSTR(TIME_SET_DONE_STR),3);
 }
 
 
@@ -334,10 +338,10 @@ void brightness_preview_cb(uint8_t brv) {
 
 void main_menu(void) {
 	const PGM_P table[] = {
-		PSTR("Ajan Asetus"),
-		PSTR("Yokirkkauden Asetus"),
-		PSTR("Paivakirkkauden Asetus"),
-		PSTR("Poistu")
+		PSTR(TIME_SET_STR),
+		PSTR(NIGHT_BR_SET_STR),
+		PSTR(DAY_BR_SET_STR),
+		PSTR(EXIT_STR)
 	};
 	uint8_t sel = text_select(0, 3, 4, table);
 	switch (sel) {
