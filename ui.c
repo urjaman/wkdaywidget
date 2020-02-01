@@ -9,6 +9,7 @@
 /* Language select - uncomment the one you want to use. */
 
 #include "lang_fi.h"
+//#include "lang_en.h"
 
 const char wkdaystr[] PROGMEM = WEEKDAYSTR;
 
