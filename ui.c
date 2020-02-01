@@ -323,6 +323,10 @@ void set_timedate(void) {
 	ui_scroll_str_P(PSTR(MINUTES_STR), 4);
 	t.min = numeric_entry(t.min, 0, 59, abort_val, NULL);
 	if (t.min == abort_val) return;
+
+	/* Umm yeah set time time on the minute change, so zero the seconds. */
+	t.sec = 0;
+
 	timer_set_time(&t);
 
 	wait_nokey();
