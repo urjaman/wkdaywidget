@@ -23,6 +23,8 @@
 #include "buttons.h"
 #include "dsp16seg.h"
 #include "ui.h"
+#include "i2c.h"
+
 
 CIFACE_APP(d16s_cmd, "DSP16")
 {
@@ -100,4 +102,17 @@ CIFACE_APP(btns_cmd, "BTNS")
 CIFACE_APP(timer_cmd, "TIMER")
 {
 	luint2outdual(timer_get());
+}
+
+CIFACE_APP(i2c_scan_cmd, "I2CSCAN")
+{
+	uint8_t a=2;
+	do {
+		uint8_t r = i2c_start(a);
+		if (r == 0) {
+			i2c_stop();
+			luint2outdual(a);
+		}
+		a += 2;
+	} while (a);
 }

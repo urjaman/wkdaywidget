@@ -146,12 +146,13 @@ static void spi_shove(uint8_t data) {
 
 static void spi_done(void) {
 	uint8_t st;
-	volatile uint8_t dummy=dummy;
+	volatile uint8_t dummy;
 	do {
 		st = SPSR;
 		dummy = SPDR;
 	} while (!(st & _BV(SPIF)));
 	_delay_us(2);
+	(void)dummy;
 }
 
 static void dsp16seg_update(uint16_t *segdat, uint8_t dp) {

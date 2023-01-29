@@ -145,6 +145,7 @@ uint8_t timer_time_isvalid(void) {
 static void timer_time_tick(void) {
 	uint8_t rv;
 	struct mtm rtctime;
+#if 1
 	if ((rv=rtc_read(&rtctime))==0) { // We have RTC and it is valid, take it as the absolute truth.
 		if ((timer_time_valid)&&(rtctime.year < timer_tm_now.year)) {
 			/* Umm, no. */
@@ -156,6 +157,8 @@ static void timer_time_tick(void) {
 			return;
 		}
 	}
+#endif
+
 	// We have no RTC and have to wing it on our own.
 	uint24_t tmp = timer_tm_now.sec+1;
 	if (tmp>=60) {
@@ -184,14 +187,3 @@ static void timer_time_tick(void) {
 	}
 }
 
-/* for FAT driver */
-void get_datetime(uint16_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* min, uint8_t* sec)
-{
-	/* Only use 2000 - 2099 for FAT regardless of century. */
-	*year = 2000 + ((timer_tm_now.year + TIME_EPOCH_YEAR) % 100);
-	*month = timer_tm_now.month;
-	*day = timer_tm_now.day;
-	*hour = timer_tm_now.hour;
-	*min = timer_tm_now.min;
-	*sec = timer_tm_now.sec;
-}

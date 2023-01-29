@@ -20,7 +20,7 @@ OBJCOPY=avr-objcopy
 MMCU=atmega328p
 #AVRBINDIR=~/avr-tools/bin/
 SERIAL_DEV ?= /dev/ttyUSB0
-AVRDUDECMD=avrdude -p m328p -c arduino -P $(SERIAL_DEV) -b 115200
+AVRDUDECMD=avrdude -p m328p -c atmelice_isp
 CFLAGS=-mmcu=$(MMCU) -Os -fno-inline-small-functions -g -Wno-main -Wall -W -pipe -flto -flto-partition=none -fwhole-program
 CMD_SOURCES=commands.c ciface/command_echo.c
 SOURCES=main.c uart.c i2c.c rtc.c buttons.c timer.c time.c dsp16seg.c ui.c $(CMD_SOURCES)

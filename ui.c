@@ -53,6 +53,7 @@ uint8_t crc8(void *b_, uint8_t cnt) {
 
 static void load_ss(void) {
 	struct rtc_savestate tr;
+#if 0
 	if (rtc_read_ram(&tr, sizeof(struct rtc_savestate)) != 0)
 		goto err;
 	if (tr.magic != SAVE_MAGIC)
@@ -66,6 +67,7 @@ static void load_ss(void) {
 	ss = tr;
 	return;
 err:
+#endif
 	ss.br_day = 6;
 	ss.br_night = 3;
 	return;
@@ -74,7 +76,7 @@ err:
 static void save_ss(void) {
 	ss.magic = SAVE_MAGIC;
 	ss.crc = crc8(&ss, sizeof(struct rtc_savestate) - 1);
-	rtc_write_ram(&ss, sizeof(struct rtc_savestate));
+	//rtc_write_ram(&ss, sizeof(struct rtc_savestate));
 }
 
 static void update_brightness(void) {
@@ -149,6 +151,7 @@ void ui_scroll_str(const char* str, uint8_t s) {
 		dl = dsp16seg_settext(lstr);
 		for (uint8_t d=0;d<s;d++) {
 			timer_delay_ms(50);
+			timer_set_waiting();
 			mini_mainloop();
 			if (buttons_get_v()) return;
 		}
@@ -259,7 +262,7 @@ uint8_t text_select(uint8_t start, uint8_t toval, uint8_t count, const PGM_P *ta
 			timer_delay_ms(200);
 			ui_scroll_str_P(table[n], 3);
 		}
-		timer_delay_ms(100);
+		timer_delay_ms(50);
 		mini_mainloop();
 		scroll_skipcnt++;
 		if (scroll_skipcnt == 10) scroll_skipcnt = 0;
